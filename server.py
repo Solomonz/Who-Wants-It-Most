@@ -5,6 +5,7 @@ from flask_restful import Api, Resource, reqparse
 from json import dumps
 from random import choice
 import string
+from time import sleep  # for testing
 
 LETTERS = string.ascii_uppercase
 
@@ -70,7 +71,8 @@ class RoomVIP(Resource):
         return '', 200
     
     def delete(self, room_code):
-        del rooms[room_code]  # no reason to make sure that it's there because it's going to be deleted anyways
+        if room_code in rooms:
+            del rooms[room_code]
         return '', 200
     
 
@@ -101,18 +103,47 @@ class RoomAttendance(Resource):
         params = parser.parse_args()
         name = params.name
         room = rooms.get(room_code, None)
-        if room is None:
-            return '', 200
-        del room['votes'][name]
-        
+        if room is not None:
+            del room['votes'][name]
         return '', 200
 
 
 class RoomVoting(Resource):
     def post(self, room_code):
+        parser = reqparse.RequestParser()
+        parser.add_argument("name", type=str, required=True)
+        parser.add_argument("selection", type=float, required=True)
+        params = parser.parse_args()
+        name = params.name
+        selection = params.selection
+        room = rooms.get(room_code, None)
+        if room is None:
+            return 'Unknown Room Code', 404
+        if name not in room['votes']:
+            return 'Unknown Name', 403
+        if not (1 <= selection <= 10):
+            return 'Invalid Selection', 403
+        room['votes'][name] = selection
         return '', 201
+
+    def get(self, room_code):
+        room = rooms.get(room_code, None)
+        if room is None:
+            return 'Unknown Room Code', 404
+        return dumps({
+            'voted': list(map(lambda t: t[0], filter(lambda t: t[1] is not None, room['votes'].items()))),
+            'waiting': list(map(lambda t: t[0], filter(lambda t: t[1] is None, room['votes'].items()))),
+            'closed': room['closed'],
+        }), 200
     
     def delete(self, room_code):
+        parser = reqparse.RequestParser()
+        parser.add_argument("name", type=str, required=True)
+        params = parser.parse_args()
+        name = params.name
+        room = rooms.get(room_code, None)
+        if room is not None:
+            room['votes'][name] = None
         return '', 200
 
 

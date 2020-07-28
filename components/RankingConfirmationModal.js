@@ -1,7 +1,16 @@
 import React from "react";
-import { Button, Modal, StyleSheet, Text, View } from "react-native";
+import {
+    ActivityIndicator,
+    Button,
+    Modal,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 
 export default function RankingConfirmationModal({
+    waitingForSelectionToSend,
+    errorMessage,
     visible,
     dismissModal,
     selection,
@@ -16,9 +25,15 @@ export default function RankingConfirmationModal({
         >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
+                    {waitingForSelectionToSend && (
+                        <ActivityIndicator size="large" />
+                    )}
                     <Text style={styles.modalText}>
                         On a scale of 1 to 10, I want it {selection}
                     </Text>
+                    {errorMessage != null && (
+                        <Text style={styles.errorMessage}>{errorMessage}</Text>
+                    )}
                     <View style={styles.optionsArea}>
                         <View style={styles.buttonView}>
                             <Button
@@ -52,7 +67,7 @@ const styles = StyleSheet.create({
         margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
-        paddingBottom: 0,
+        padding: 20,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -64,9 +79,12 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     modalText: {
-        padding: 20,
         alignSelf: "center",
         fontSize: 30,
+    },
+    errorMessage: {
+        fontSize: 20,
+        color: "red",
     },
     optionsArea: {
         flexDirection: "row",
@@ -77,7 +95,6 @@ const styles = StyleSheet.create({
     buttonView: {
         alignItems: "center",
         justifyContent: "center",
-        margin: 10,
         padding: 0,
         flex: 1,
     },

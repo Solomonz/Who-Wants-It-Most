@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { KeyboardAvoidingView, StyleSheet, Text, View } from "react-native";
 import RankingButtonColumn from "./RankingButtonColumn";
 import RankingConfirmationModal from "./RankingConfirmationModal";
 
@@ -71,11 +71,17 @@ export default function RankingScreen({ route, navigation }) {
     });
 
     return (
-        <>
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            style={styles.container}
+        >
             <RankingConfirmationModal
+                waitingForSelectionToSend={waitingForSelectionToSend}
+                errorMessage={errorMessage}
                 visible={modalVisible}
                 dismissModal={() => {
                     setModalVisible(false);
+                    setErrorMessage(null);
                 }}
                 selection={selection}
                 onConfirm={onConfirm}
@@ -92,11 +98,14 @@ export default function RankingScreen({ route, navigation }) {
                     onPress={onPress}
                 />
             </View>
-        </>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
     columnsContainer: {
         flexDirection: "row",
     },
