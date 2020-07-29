@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { KeyboardAvoidingView, StyleSheet, Text, View } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 import RankingButtonColumn from "./RankingButtonColumn";
 import RankingConfirmationModal from "./RankingConfirmationModal";
 
@@ -68,13 +72,10 @@ export default function RankingScreen({ route, navigation }) {
                 }
             );
         });
-    });
+    }, []);
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={styles.container}
-        >
+        <View style={styles.container}>
             <RankingConfirmationModal
                 waitingForSelectionToSend={waitingForSelectionToSend}
                 errorMessage={errorMessage}
@@ -86,6 +87,12 @@ export default function RankingScreen({ route, navigation }) {
                 selection={selection}
                 onConfirm={onConfirm}
             />
+            <View style={styles.paramTextContainer}>
+                <Text style={styles.paramText}>{route.params.name}</Text>
+                <Text style={[styles.paramText, { fontWeight: "bold" }]}>
+                    {route.params.roomCode}
+                </Text>
+            </View>
             <Text style={styles.infoText}>1 = I don't want it</Text>
             <Text style={styles.infoText}>10 = I want it</Text>
             <View style={styles.columnsContainer}>
@@ -98,7 +105,7 @@ export default function RankingScreen({ route, navigation }) {
                     onPress={onPress}
                 />
             </View>
-        </KeyboardAvoidingView>
+        </View>
     );
 }
 
@@ -108,6 +115,15 @@ const styles = StyleSheet.create({
     },
     columnsContainer: {
         flexDirection: "row",
+        flex: 1,
+    },
+    paramTextContainer: {
+        padding: 10,
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    paramText: {
+        fontSize: 20,
     },
     infoText: {
         alignSelf: "center",

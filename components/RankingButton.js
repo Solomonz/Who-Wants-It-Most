@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, TouchableHighlight } from "react-native";
+import { StyleSheet, Text, TouchableHighlight } from "react-native";
 
 export default function RankingButton({ number, onPress }) {
     return (
@@ -15,11 +15,11 @@ export default function RankingButton({ number, onPress }) {
 
 const styles = StyleSheet.create({
     button: {
+        justifyContent: "center",
+        flex: 1,
         margin: 10,
-        padding: 10,
         borderWidth: 2,
         borderRadius: 10,
-        alignSelf: "stretch",
     },
     buttonText: {
         fontSize: 30,
