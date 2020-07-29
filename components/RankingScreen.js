@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
+    Keyboard,
     StyleSheet,
     Text,
     View,
 } from "react-native";
 import RankingButtonColumn from "./RankingButtonColumn";
+import RankingDecimalInput from "./RankingDecimalInput";
 import RankingConfirmationModal from "./RankingConfirmationModal";
 
 import constants from "../constants.json";
@@ -12,6 +14,7 @@ import constants from "../constants.json";
 export default function RankingScreen({ route, navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [selection, setSelection] = useState(-1);
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [waitingForSelectionToSend, setWaitingForSelectionToSend] = useState(
         false
     );
@@ -21,6 +24,23 @@ export default function RankingScreen({ route, navigation }) {
         setSelection(number);
         setModalVisible(true);
     };
+
+    const _keyboardShowing = () => setKeyboardVisible(true);
+    const _keyboardHiding = () => setKeyboardVisible(false);
+
+    useEffect(() => {
+        Keyboard.addListener("keyboardWillShow", _keyboardShowing);
+        Keyboard.addListener("keyboardWillHide", _keyboardHiding);
+        Keyboard.addListener("keyboardDidShow", _keyboardShowing);
+        Keyboard.addListener("keyboardDidHide", _keyboardHiding);
+
+        return () => {
+            Keyboard.removeListener("keyboardWillShow", _keyboardShowing);
+            Keyboard.removeListener("keyboardWillHide", _keyboardHiding);
+            Keyboard.removeListener("keyboardDidShow", _keyboardShowing);
+            Keyboard.removeListener("keyboardDidHide", _keyboardHiding);
+        };
+    }, []);
 
     const onConfirm = async () => {
         setWaitingForSelectionToSend(true);
@@ -95,16 +115,22 @@ export default function RankingScreen({ route, navigation }) {
             </View>
             <Text style={styles.infoText}>1 = I don't want it</Text>
             <Text style={styles.infoText}>10 = I want it</Text>
-            <View style={styles.columnsContainer}>
-                <RankingButtonColumn
-                    numbers={[1, 2, 3, 4, 5]}
-                    onPress={onPress}
-                />
-                <RankingButtonColumn
-                    numbers={[6, 7, 8, 9, 10]}
-                    onPress={onPress}
-                />
-            </View>
+            <RankingDecimalInput
+                onConfirm={onPress}
+                focused={keyboardVisible}
+            />
+            {!keyboardVisible && (
+                <View style={styles.columnsContainer}>
+                    <RankingButtonColumn
+                        numbers={[1, 2, 3, 4, 5]}
+                        onPress={onPress}
+                    />
+                    <RankingButtonColumn
+                        numbers={[6, 7, 8, 9, 10]}
+                        onPress={onPress}
+                    />
+                </View>
+            )}
         </View>
     );
 }
