@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     paramText: {
-        fontSize: 20,
+        fontSize: 30,
     },
     infoText: {
         alignSelf: "center",
