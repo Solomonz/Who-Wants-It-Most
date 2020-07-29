@@ -103,7 +103,7 @@ class RoomAttendance(Resource):
         params = parser.parse_args()
         name = params.name
         room = rooms.get(room_code, None)
-        if room is not None:
+        if room is not None and name in room['votes']:
             del room['votes'][name]
         return '', 200
 
