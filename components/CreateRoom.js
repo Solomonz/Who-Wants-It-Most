@@ -30,7 +30,7 @@ export default function CreateRoom({ navigation }) {
         const roomCode = await res.json();
         setRoomCode(roomCode);
         navigation.addListener("beforeRemove", (event) => {
-            fetch(constants.server_address + "/room/" + roomCode + "/delete", {
+            fetch(constants.server_address + "/room/" + roomCode, {
                 method: "DELETE",
             });
         });
@@ -84,7 +84,9 @@ export default function CreateRoom({ navigation }) {
                 <TextInput
                     ref={input}
                     value={name}
-                    onChangeText={setName}
+                    onChangeText={(newName) => {
+                        setName(newName.toUpperCase());
+                    }}
                     style={styles.nameTextInput}
                 />
             </View>

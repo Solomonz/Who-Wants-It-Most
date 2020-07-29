@@ -54,7 +54,7 @@ export default function RankingDecimalInput({ onConfirm, focused }) {
                                     ? [styles.confirmButtonDisabled]
                                     : []),
                             ]}
-                            onPress={onConfirm}
+                            onPress={() => onConfirm(value)}
                             underlayColor="orange"
                             disabled={confirmButtonDisabled}
                         >

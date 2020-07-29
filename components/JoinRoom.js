@@ -76,7 +76,9 @@ export default function JoinRoom({ navigation }) {
                 <TextInput
                     ref={nameInput}
                     value={name}
-                    onChangeText={setName}
+                    onChangeText={(newName) => {
+                        setName(newName.toUpperCase());
+                    }}
                     style={styles.textInput}
                 />
             </View>
