@@ -4,6 +4,7 @@ import CreateRoom from "./components/CreateRoom";
 import JoinRoom from "./components/JoinRoom";
 import RankingScreen from "./components/RankingScreen";
 import SubmissionsPage from "./components/SubmissionsPage";
+import ResultsPage from "./components/ResultsPage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -37,6 +38,11 @@ export default function App() {
                     name="SubmissionsPage"
                     options={{ title: "Submissions Page" }}
                     component={SubmissionsPage}
+                />
+                <Screen
+                    name="ResultsPage"
+                    options={{ title: "Results Page" }}
+                    component={ResultsPage}
                 />
             </Navigator>
         </NavigationContainer>

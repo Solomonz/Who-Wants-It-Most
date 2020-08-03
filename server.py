@@ -52,6 +52,7 @@ class RoomVIP(Resource):
             code = generate_random_room_code()
         rooms[code] = {
             "closed": False,
+            "revealed": False,
             "votes": {},
         }
 
@@ -141,9 +142,22 @@ class RoomVoting(Resource):
         return '', 200
 
 
+class RoomReveal(Resource):
+    def post(self, room_code):
+        room = rooms.get(room_code, None)
+        if room is None:
+            return 'Unknown Room Code', 404
+        if any(filter(lambda t: t[1] is None, room['votes'].items())):
+            return 'Not everyone has voted', 403
+        room['revealed'] = True
+        room['closed'] = True
+        return '', 201
+
+
 api.add_resource(RoomVIP, "/room", "/room/", "/room/<string:room_code>", "/room/<string:room_code>/")
 api.add_resource(RoomAttendance, "/room/<string:room_code>/attend", "/room/<string:room_code>/attend/")
 api.add_resource(RoomVoting, "/room/<string:room_code>/vote", "/room/<string:room_code>/vote/")
+api.add_resource(RoomReveal, "/room/<string:room_code>/reveal", "/room/<string:room_code>/reveal/")
 
 
 if __name__ == '__main__':

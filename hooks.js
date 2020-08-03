@@ -32,6 +32,7 @@ export const useDecimalInputState = () => {
 const transformRoomState = (roomState) => {
     return {
         closed: roomState.closed,
+        revealed: roomState.revealed,
         sectionData: [
             {
                 title: "VOTED",
@@ -58,7 +59,7 @@ export const useSubmissionsPageState = (params, navigation) => {
         false
     );
     const [roomState, setRoomState] = useState(
-        transformRoomState({ closed: false, votes: {} })
+        transformRoomState({ closed: false, revealed: false, votes: {} })
     );
     const [roomStateErrorMessage, setRoomStateErrorMessage] = useState(null);
 
@@ -71,11 +72,14 @@ export const useSubmissionsPageState = (params, navigation) => {
         const returnValue = await res.json();
         if (res.status == 200) {
             setRoomStateErrorMessage(null);
-            setRoomState(transformRoomState(JSON.parse(returnValue)));
+            const newRoomState = transformRoomState(JSON.parse(returnValue));
+            if (newRoomState.revealed) {
+                navigation.navigate("ResultsPage", params);
+            }
+            setRoomState(newRoomState);
         } else {
             setRoomStateErrorMessage(returnValue);
         }
-
         setRequestingRoomStateUpdate(false);
     };
 
@@ -105,6 +109,28 @@ export const useSubmissionsPageState = (params, navigation) => {
         setWaitingForCloseRequest(false);
     };
 
+    const [requestingReveal, setRequestingReveal] = useState(false);
+    const [revealButtonDisabled, setRevealButtonDisabled] = useState(true);
+    useEffect(() => {
+        setRevealButtonDisabled(roomState.sectionData[1].data.length !== 0);
+    }, [roomState]);
+
+    const onReveal = async () => {
+        setRequestingReveal(true);
+        const res = await fetch(
+            constants.server_address + "/room/" + roomCode + "/reveal",
+            { method: "POST" }
+        );
+        const returnedErrorMessage = await res.json();
+        if (res.status === 201) {
+            setRoomStateErrorMessage(null);
+        } else {
+            setRoomStateErrorMessage(returnedErrorMessage);
+        }
+        requestRoomStateUpdate();
+        setRequestingReveal(false);
+    };
+
     return [
         roomState,
         toggleClosed,
@@ -113,5 +139,8 @@ export const useSubmissionsPageState = (params, navigation) => {
         requestingRoomStateUpdate,
         closingErrorMessage,
         roomStateErrorMessage,
+        revealButtonDisabled,
+        requestingReveal,
+        onReveal,
     ];
 };

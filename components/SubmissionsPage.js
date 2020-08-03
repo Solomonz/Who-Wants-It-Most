@@ -5,6 +5,7 @@ import {
     StyleSheet,
     Switch,
     Text,
+    TouchableHighlight,
     View,
 } from "react-native";
 import { DefaultTheme } from "@react-navigation/native";
@@ -24,6 +25,9 @@ export default function SubmissionsPage({ route, navigation }) {
         requestingRoomStateUpdate,
         closingErrorMessage,
         roomStateErrorMessage,
+        revealButtonDisabled,
+        requestingReveal,
+        onReveal,
     ] = useSubmissionsPageState(route.params, navigation);
 
     useEffect(() => {
@@ -105,6 +109,37 @@ export default function SubmissionsPage({ route, navigation }) {
                     </View>
                 )}
             />
+            {isVIP &&
+                (requestingReveal ? (
+                    <ActivityIndicator size="large" />
+                ) : (
+                    <TouchableHighlight
+                        disabled={revealButtonDisabled}
+                        style={
+                            revealButtonDisabled
+                                ? [
+                                      styles.revealButton,
+                                      styles.revealButtonDisabled,
+                                  ]
+                                : styles.revealButton
+                        }
+                        onPress={onReveal}
+                        underlayColor="orange"
+                    >
+                        <Text
+                            style={
+                                revealButtonDisabled
+                                    ? [
+                                          styles.revealButtonText,
+                                          styles.revealButtonTextDisabled,
+                                      ]
+                                    : styles.revealButtonText
+                            }
+                        >
+                            Who Wants It Most?
+                        </Text>
+                    </TouchableHighlight>
+                ))}
         </View>
     );
 }
@@ -167,5 +202,25 @@ const styles = StyleSheet.create({
     },
     stillWaitingText: {
         color: "red",
+    },
+    revealButton: {
+        margin: 10,
+        padding: 10,
+        borderWidth: 2,
+        borderRadius: 5,
+        flexDirection: "row",
+        alignSelf: "center",
+    },
+    revealButtonDisabled: {
+        backgroundColor: "lightgrey",
+    },
+    revealButtonText: {
+        flex: 1,
+        fontSize: 30,
+        textAlign: "center",
+        color: "blue",
+    },
+    revealButtonTextDisabled: {
+        color: "grey",
     },
 });
