@@ -154,10 +154,16 @@ class RoomReveal(Resource):
         return '', 201
 
 
+class RoomDebug(Resource):
+    def get(self):
+        return dumps(rooms), 200
+
+
 api.add_resource(RoomVIP, "/room", "/room/", "/room/<string:room_code>", "/room/<string:room_code>/")
 api.add_resource(RoomAttendance, "/room/<string:room_code>/attend", "/room/<string:room_code>/attend/")
 api.add_resource(RoomVoting, "/room/<string:room_code>/vote", "/room/<string:room_code>/vote/")
 api.add_resource(RoomReveal, "/room/<string:room_code>/reveal", "/room/<string:room_code>/reveal/")
+api.add_resource(RoomDebug, "/room/debug/", "/room/debug/")
 
 
 if __name__ == '__main__':
