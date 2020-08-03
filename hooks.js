@@ -105,7 +105,7 @@ export const useSubmissionsPageState = (params, navigation) => {
         } else {
             setClosingErrorMessage(returnedErrorMessage);
         }
-        requestRoomStateUpdate();
+        await requestRoomStateUpdate();
         setWaitingForCloseRequest(false);
     };
 
