@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-    KeyboardAvoidingView,
     StyleSheet,
     Text,
     TextInput,
@@ -126,7 +125,6 @@ const styles = StyleSheet.create({
         padding: 10,
         borderWidth: 2,
         borderRadius: 10,
-        // alignSelf: "stretch",
     },
     confirmButtonDisabled: {
         backgroundColor: "lightgrey",
