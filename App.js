@@ -30,7 +30,7 @@ export default function App() {
                 />
                 <Screen
                     name="RankingScreen"
-                    options={{ title: "Who Wants It Most?" }}
+                    options={{ title: "How much do you want it?" }}
                     component={RankingScreen}
                 />
                 <Screen

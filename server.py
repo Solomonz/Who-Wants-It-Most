@@ -79,9 +79,7 @@ class RoomVIP(Resource):
 class RoomAttendance(Resource):
     def post(self, room_code):
         parser = reqparse.RequestParser()
-        #   parser.add_argument("action", type=str, help="Should be one of \"join\", \"update_name\", \"vote\", or \"close\"", required=True)
         parser.add_argument("name", type=str, required=True)
-        #   parser.add_argument("ranking", type=float)
         params = parser.parse_args()
         name = params.name
         if name == '':

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { DefaultTheme } from "@react-navigation/native";
 
-import { useClosingState, useRoomState } from "../hooks";
+import { useSubmissionsPageState } from "../hooks";
 import constants from "../constants.json";
 
 export default function SubmissionsPage({ route, navigation }) {
@@ -17,17 +17,14 @@ export default function SubmissionsPage({ route, navigation }) {
     const roomCode = route.params.roomCode;
     const name = route.params.name;
     const [
-        toggleClosed,
-        waitingForCloseRequest,
-        setWaitingForCloseRequest,
-        closingErrorMessage,
-    ] = useClosingState(roomCode);
-    const [
         roomState,
-        requestingRoomStateUpdate,
-        roomStateErrorMessage,
+        toggleClosed,
         requestRoomStateUpdate,
-    ] = useRoomState(roomCode, setWaitingForCloseRequest);
+        waitingForCloseRequest,
+        requestingRoomStateUpdate,
+        closingErrorMessage,
+        roomStateErrorMessage,
+    ] = useSubmissionsPageState(route.params, navigation);
 
     useEffect(() => {
         console.log(roomState);
@@ -68,10 +65,7 @@ export default function SubmissionsPage({ route, navigation }) {
                                     <ActivityIndicator size="large" />
                                 ) : (
                                     <Switch
-                                        onValueChange={async () => {
-                                            await toggleClosed();
-                                            requestRoomStateUpdate();
-                                        }}
+                                        onValueChange={toggleClosed}
                                         value={roomState.closed}
                                     />
                                 )}
