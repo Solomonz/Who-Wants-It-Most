@@ -130,11 +130,7 @@ class RoomVoting(Resource):
         room = rooms.get(room_code, None)
         if room is None:
             return 'Unknown Room Code', 404
-        return dumps({
-            'voted': list(map(lambda t: t[0], filter(lambda t: t[1] is not None, room['votes'].items()))),
-            'waiting': list(map(lambda t: t[0], filter(lambda t: t[1] is None, room['votes'].items()))),
-            'closed': room['closed'],
-        }), 200
+        return dumps(room), 200
     
     def delete(self, room_code):
         parser = reqparse.RequestParser()

@@ -51,8 +51,65 @@ export const useClosingState = (roomCode) => {
         } else {
             setClosingErrorMessage(returnedErrorMessage);
         }
+    };
+
+    return [
+        toggleClosed,
+        waitingForCloseRequest,
+        setWaitingForCloseRequest,
+        closingErrorMessage,
+    ];
+};
+
+const transformRoomState = (roomState) => {
+    return {
+        closed: roomState.closed,
+        sectionData: [
+            {
+                title: "VOTED",
+                data: Object.keys(roomState.votes).filter(
+                    (name) => roomState.votes[name] !== null
+                ),
+            },
+            {
+                title: "JOINED",
+                data: Object.keys(roomState.votes).filter(
+                    (name) => roomState.votes[name] === null
+                ),
+            },
+        ],
+    };
+};
+
+export const useRoomState = (roomCode, setWaitingForCloseRequest) => {
+    const [requestingRoomStateUpdate, setRequestingRoomStateUpdate] = useState(
+        false
+    );
+    const [roomState, setRoomState] = useState({ closed: false, votes: {} });
+    const [roomStateErrorMessage, setRoomStateErrorMessage] = useState(null);
+
+    const requestRoomStateUpdate = async () => {
+        setRequestingRoomStateUpdate(true);
+
+        const res = await fetch(
+            constants.server_address + "/room/" + roomCode + "/vote"
+        );
+        const returnValue = await res.json();
+        if (res.status == 200) {
+            setRoomStateErrorMessage(null);
+            setRoomState(transformRoomState(JSON.parse(returnValue)));
+        } else {
+            setRoomStateErrorMessage(returnValue);
+        }
+
+        setRequestingRoomStateUpdate(false);
         setWaitingForCloseRequest(false);
     };
 
-    return [closed, toggleClosed, waitingForCloseRequest, closingErrorMessage];
+    return [
+        roomState,
+        requestingRoomStateUpdate,
+        roomStateErrorMessage,
+        requestRoomStateUpdate,
+    ];
 };
