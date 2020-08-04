@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+from copy import deepcopy as cp
 from flask import Flask
 from flask_restful import Api, Resource, reqparse
 from json import dumps
@@ -16,6 +17,10 @@ api = Api(app)
 rooms = {}
 lock = threading.Lock()
 
+ROOM_STATES = {'open': 0, 'closed': 1, 'tie': 2, 'revealed': 3}
+for s, e in list(ROOM_STATES.items()):
+    ROOM_STATES[e] = s
+
 
 def generate_random_room_code():
     return ''.join(choice(LETTERS) for _ in range(4))
@@ -29,32 +34,27 @@ class RoomVIP(Resource):
             while code in rooms.keys():
                 code = generate_random_room_code()
             rooms[code] = {
-                "closed": False,
-                "revealed": False,
+                "state": ROOM_STATES['open'],
                 "votes": {},
             }
 
             return code, 201
     
     def put(self, room_code):
-        parser = reqparse.RequestParser()
-        parser.add_argument("closed", type=bool, required=True)
-        params = parser.parse_args()
-        closed = params.closed
         with lock:
             global rooms
             room = rooms.get(room_code, None)
             if room is None:
                 return 'Unknown Room Code', 404
-            if closed == room['closed']:
-                return 'Redundant Action, check app logic', 403
-            room['closed'] = closed
+            if room['state'] not in {ROOM_STATES['open'], ROOM_STATES['closed']}:
+                return 'Invalid action for room in "{}" state'.format(ROOM_STATES[room['state']]), 403
+            room['state'] = 1 - room['state']
             return '', 200
     
     def delete(self, room_code):
         with lock:
             global rooms
-            if room_code in rooms:
+            if room_code in rooms and rooms[room_code]['state'] not in {ROOM_STATES['tie'], ROOM_STATES['revealed']}:
                 del rooms[room_code]
             return '', 200
     
@@ -74,7 +74,7 @@ class RoomAttendance(Resource):
                 return 'Unknown Room Code', 404
             if name in room['votes']:
                 return 'Someone with that name has already joined this room', 409
-            if room['closed']:
+            if room['state'] != ROOM_STATES['open']:
                 return 'This room has been closed', 403
             
             room['votes'][name] = None
@@ -88,7 +88,7 @@ class RoomAttendance(Resource):
         with lock:
             global rooms
             room = rooms.get(room_code, None)
-            if room is not None and name in room['votes']:
+            if room is not None and name in room['votes'] and room['state'] not in {ROOM_STATES['tie'], ROOM_STATES['revealed']}:
                 del room['votes'][name]
             return '', 200
 
@@ -106,9 +106,14 @@ class RoomVoting(Resource):
             room = rooms.get(room_code, None)
             if room is None:
                 return 'Unknown Room Code', 404
+            if room['state'] == ROOM_STATES['revealed']:
+                return 'Room has been revealed, voting has ended', 403
             if name not in room['votes']:
                 return 'Unknown Name', 403
-            if not (1 <= selection <= 10):
+
+            # This isn't really the best validation I could do, but most of the validation happens clientside anyways
+            # so I'm not too cut up about it
+            if not ((1 <= selection <= 10) if (room['state'] != ROOM_STATES['tie']) else (0.75 <= selection <= 10.25)):
                 return 'Invalid Selection', 403
             room['votes'][name] = selection
             return '', 201
@@ -119,6 +124,12 @@ class RoomVoting(Resource):
             room = rooms.get(room_code, None)
             if room is None:
                 return 'Unknown Room Code', 404
+            
+            if room['state'] == ROOM_STATES['revealed']:
+                room['remaining_unseen'] -= 1
+                if room['remaining_unseen'] == 0:
+                    room = cp(room)
+                    del rooms[room_code]
             return dumps(room), 200
     
     def delete(self, room_code):
@@ -129,7 +140,7 @@ class RoomVoting(Resource):
         with lock:
             global rooms
             room = rooms.get(room_code, None)
-            if room is not None:
+            if room is not None and room['state'] not in {ROOM_STATES['tie'], ROOM_STATES['revealed']}:
                 room['votes'][name] = None
             return '', 200
 
@@ -143,8 +154,15 @@ class RoomReveal(Resource):
                 return 'Unknown Room Code', 404
             if any(filter(lambda t: t[1] is None, room['votes'].items())):
                 return 'Not everyone has voted', 403
-            room['revealed'] = True
-            room['closed'] = True
+            highest = max(room['votes'].values())
+            if len(list(filter(lambda t: t[1] == highest, room['votes'].items()))) > 1:
+                room['state'] = ROOM_STATES['tie']
+                for name in room['votes'].keys():
+                    room['votes'][name] = None
+            else:
+                room['state'] = ROOM_STATES['revealed']
+                room['remaining_unseen'] = len(room['votes'])
+
             return '', 201
 
 
@@ -163,4 +181,4 @@ api.add_resource(RoomDebug, "/room/debug/", "/room/debug/")
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=False)
+    app.run(host='0.0.0.0', debug=True)
