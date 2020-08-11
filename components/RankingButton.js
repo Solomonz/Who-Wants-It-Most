@@ -14,6 +14,18 @@ export default function RankingButton({ number, onPress }) {
         9: "rgba(195, 138, 219, 1)",
         10: "rgba(240, 152, 204, 1)",
     };
+    const buttonColors2 = {
+        1: "hsl(0, 60%, 70%)",
+        2: "hsl(36, 60%, 70%)",
+        3: "hsl(72, 60%, 70%)",
+        4: "hsl(108, 60%, 70%)",
+        5: "hsl(144, 60%, 70%)",
+        6: "hsl(180, 60%, 70%)",
+        7: "hsl(216, 60%, 70%)",
+        8: "hsl(252, 60%, 70%)",
+        9: "hsl(288, 60%, 70%)",
+        10: "hsl(324, 60%, 70%)",
+    };
     return (
         <TouchableHighlight
             style={styles.button}

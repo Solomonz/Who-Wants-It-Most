@@ -75,6 +75,7 @@ export const useSubmissionsScreenState = (params, navigation) => {
                 params.name
         );
         const returnValue = await res.json();
+        console.log(returnValue);
         if (res.status == 200) {
             setRoomStateErrorMessage(null);
             const parsedReturnValue = JSON.parse(returnValue);
