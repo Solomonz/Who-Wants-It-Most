@@ -34,8 +34,7 @@ export const useDecimalInputState = (tieParams = null) => {
 
 const transformRoomState = (roomState) => {
     return {
-        closed: roomState.closed,
-        revealed: roomState.revealed,
+        state: roomState.state,
         sectionData: [
             {
                 title: "VOTED",
@@ -53,16 +52,15 @@ const transformRoomState = (roomState) => {
     };
 };
 
-export const useSubmissionsPageState = (params, navigation) => {
+export const useSubmissionsScreenState = (params, navigation) => {
     const roomCode = params.roomCode;
-    const [closed, setClosed] = useState(false);
     const [closingErrorMessage, setClosingErrorMessage] = useState(null);
     const [waitingForCloseRequest, setWaitingForCloseRequest] = useState(false);
     const [requestingRoomStateUpdate, setRequestingRoomStateUpdate] = useState(
         false
     );
     const [roomState, setRoomState] = useState(
-        transformRoomState({ closed: false, revealed: false, votes: {} })
+        transformRoomState({ state: 0, votes: {} })
     );
     const [roomStateErrorMessage, setRoomStateErrorMessage] = useState(null);
 
@@ -70,14 +68,39 @@ export const useSubmissionsPageState = (params, navigation) => {
         setRequestingRoomStateUpdate(true);
 
         const res = await fetch(
-            constants.server_address + "/room/" + roomCode + "/vote"
+            constants.server_address +
+                "/room/" +
+                roomCode +
+                "/vote/" +
+                params.name
         );
         const returnValue = await res.json();
         if (res.status == 200) {
             setRoomStateErrorMessage(null);
-            const newRoomState = transformRoomState(JSON.parse(returnValue));
-            if (newRoomState.revealed) {
-                navigation.navigate("ResultsPage", params);
+            const parsedReturnValue = JSON.parse(returnValue);
+            const newRoomState = transformRoomState(parsedReturnValue);
+            if (newRoomState.state == 2) {
+                navigation.reset({
+                    index: 1,
+                    routes: [
+                        { name: "Home" },
+                        { name: "TieScreen", params: params },
+                    ],
+                });
+            } else if (newRoomState.state == 4) {
+                navigation.reset({
+                    index: 1,
+                    routes: [
+                        { name: "Home" },
+                        {
+                            name: "ResultsScreen",
+                            params: {
+                                winner: parsedReturnValue.winner,
+                                ...params,
+                            },
+                        },
+                    ],
+                });
             }
             setRoomState(newRoomState);
         } else {
@@ -86,25 +109,33 @@ export const useSubmissionsPageState = (params, navigation) => {
         setRequestingRoomStateUpdate(false);
     };
 
+    useEffect(() => {
+        const timerId = setInterval(requestRoomStateUpdate, 5000);
+        requestRoomStateUpdate();
+        navigation.addListener("beforeRemove", () => {
+            fetch(
+                constants.server_address +
+                    "/room/" +
+                    roomCode +
+                    "/vote/" +
+                    params.name,
+                {
+                    method: "DELETE",
+                }
+            );
+        });
+        return () => clearInterval(timerId);
+    }, []);
+
     const toggleClosed = async () => {
         setWaitingForCloseRequest(true);
-        const newClosed = !closed;
         const res = await fetch(
             constants.server_address + "/room/" + roomCode,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "PUT",
-                body: JSON.stringify({
-                    closed: newClosed,
-                }),
-            }
+            { method: "PUT" }
         );
         const returnedErrorMessage = await res.json();
         if (res.status == 200) {
             setClosingErrorMessage(null);
-            setClosed(newClosed);
         } else {
             setClosingErrorMessage(returnedErrorMessage);
         }
@@ -130,14 +161,13 @@ export const useSubmissionsPageState = (params, navigation) => {
         } else {
             setRoomStateErrorMessage(returnedErrorMessage);
         }
-        requestRoomStateUpdate();
+        await requestRoomStateUpdate();
         setRequestingReveal(false);
     };
 
     return [
         roomState,
         toggleClosed,
-        requestRoomStateUpdate,
         waitingForCloseRequest,
         requestingRoomStateUpdate,
         closingErrorMessage,

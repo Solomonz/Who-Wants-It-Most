@@ -43,14 +43,14 @@ export default function RankingScreen({ route, navigation }) {
             constants.server_address +
                 "/room/" +
                 route.params.roomCode +
-                "/vote",
+                "/vote/" +
+                route.params.name,
             {
                 headers: {
                     "Content-Type": "application/json",
                 },
                 method: "POST",
                 body: JSON.stringify({
-                    name: route.params.name,
                     selection: selection,
                 }),
             }
