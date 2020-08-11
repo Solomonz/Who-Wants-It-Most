@@ -1,56 +1,7 @@
-import React, { useEffect } from "react";
-import {
-    ActivityIndicator,
-    SectionList,
-    StyleSheet,
-    Switch,
-    Text,
-    TouchableHighlight,
-    View,
-} from "react-native";
-import { DefaultTheme } from "@react-navigation/native";
+import React from "react";
+import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
 
-import { useSubmissionsPageState } from "../hooks";
-import constants from "../constants.json";
-
-export default function ResultsPage({ route, navigation }) {
-    const isVIP = route.params.VIP;
-    const roomCode = route.params.roomCode;
-    const name = route.params.name;
-    const [
-        roomState,
-        toggleClosed,
-        requestRoomStateUpdate,
-        waitingForCloseRequest,
-        requestingRoomStateUpdate,
-        closingErrorMessage,
-        roomStateErrorMessage,
-        revealButtonDisabled,
-        requestingReveal,
-        onReveal,
-    ] = useSubmissionsPageState(roomCode, route.params, navigation);
-
-    useEffect(() => {
-        console.log(roomState);
-    }, [roomState]);
-
-    useEffect(() => {
-        requestRoomStateUpdate();
-        const timerId = setInterval(requestRoomStateUpdate, 5000);
-        navigation.addListener("beforeRemove", () => {
-            fetch(constants.server_address + "/room/" + roomCode + "/vote", {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "DELETE",
-                body: JSON.stringify({
-                    name: name,
-                }),
-            });
-            clearInterval(timerId);
-        });
-    }, []);
-
+export default function ResultsScreen({ route, navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.paramTextContainer}>

@@ -58,7 +58,7 @@ export default function RankingScreen({ route, navigation }) {
         const returnedErrorMessage = await res.json();
         if (res.status == 201) {
             setErrorMessage(null);
-            navigation.navigate("SubmissionsPage", {
+            navigation.navigate("SubmissionsScreen", {
                 selection: selection,
                 ...route.params,
             });

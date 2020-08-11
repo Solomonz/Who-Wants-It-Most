@@ -3,8 +3,8 @@ import MainMenu from "./components/MainMenu";
 import CreateRoom from "./components/CreateRoom";
 import JoinRoom from "./components/JoinRoom";
 import RankingScreen from "./components/RankingScreen";
-import SubmissionsPage from "./components/SubmissionsPage";
-import ResultsPage from "./components/ResultsPage";
+import SubmissionsScreen from "./components/SubmissionsScreen";
+import ResultsScreen from "./components/ResultsScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -35,14 +35,17 @@ export default function App() {
                     component={RankingScreen}
                 />
                 <Screen
-                    name="SubmissionsPage"
-                    options={{ title: "Submissions Page" }}
-                    component={SubmissionsPage}
+                    name="SubmissionsScreen"
+                    options={{ title: "Submissions" }}
+                    component={SubmissionsScreen}
                 />
                 <Screen
-                    name="ResultsPage"
-                    options={{ title: "Results Page" }}
-                    component={ResultsPage}
+                    name="ResultsScreen"
+                    options={{
+                        title: "Results",
+                        headerLeft: () => null,
+                    }}
+                    component={ResultsScreen}
                 />
             </Navigator>
         </NavigationContainer>

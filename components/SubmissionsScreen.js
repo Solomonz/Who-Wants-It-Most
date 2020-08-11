@@ -10,17 +10,15 @@ import {
 } from "react-native";
 import { DefaultTheme } from "@react-navigation/native";
 
-import { useSubmissionsPageState } from "../hooks";
-import constants from "../constants.json";
+import { useSubmissionsScreenState } from "../hooks";
 
-export default function SubmissionsPage({ route, navigation }) {
+export default function SubmissionsScreen({ route, navigation }) {
     const isVIP = route.params.VIP;
     const roomCode = route.params.roomCode;
     const name = route.params.name;
     const [
         roomState,
         toggleClosed,
-        requestRoomStateUpdate,
         waitingForCloseRequest,
         requestingRoomStateUpdate,
         closingErrorMessage,
@@ -28,28 +26,7 @@ export default function SubmissionsPage({ route, navigation }) {
         revealButtonDisabled,
         requestingReveal,
         onReveal,
-    ] = useSubmissionsPageState(route.params, navigation);
-
-    useEffect(() => {
-        console.log(roomState);
-    }, [roomState]);
-
-    useEffect(() => {
-        requestRoomStateUpdate();
-        const timerId = setInterval(requestRoomStateUpdate, 5000);
-        navigation.addListener("beforeRemove", () => {
-            fetch(constants.server_address + "/room/" + roomCode + "/vote", {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "DELETE",
-                body: JSON.stringify({
-                    name: name,
-                }),
-            });
-            clearInterval(timerId);
-        });
-    }, []);
+    ] = useSubmissionsScreenState(route.params, navigation);
 
     return (
         <View style={styles.container}>
@@ -60,7 +37,7 @@ export default function SubmissionsPage({ route, navigation }) {
                         {roomCode}
                     </Text>
                     <View style={styles.closeComponentTextContainer}>
-                        {isVIP ? (
+                        {isVIP && roomState.state < 2 ? (
                             <>
                                 <Text style={styles.closeComponentText}>
                                     Closed:{" "}
@@ -70,7 +47,7 @@ export default function SubmissionsPage({ route, navigation }) {
                                 ) : (
                                     <Switch
                                         onValueChange={toggleClosed}
-                                        value={roomState.closed}
+                                        value={roomState.state !== 0}
                                     />
                                 )}
                             </>
@@ -81,12 +58,17 @@ export default function SubmissionsPage({ route, navigation }) {
                                     styles.closeComponentValueText,
                                 ]}
                             >
-                                ({roomState.closed ? "CLOSED" : "OPEN"})
+                                ({roomState.state === 0 ? "OPEN" : "CLOSED"})
                             </Text>
                         )}
                     </View>
                 </View>
             </View>
+            {requestingRoomStateUpdate && (
+                <View style={styles.roomStateUpdateActivityIndicator}>
+                    <ActivityIndicator size="large" />
+                </View>
+            )}
             <SectionList
                 style={styles.votesStatus}
                 keyExtractor={(item, index) => item + index}
