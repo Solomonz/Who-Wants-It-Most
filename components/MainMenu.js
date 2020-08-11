@@ -4,20 +4,36 @@ import { Text, View, StyleSheet, TouchableHighlight } from "react-native";
 export default function MainMenu({ navigation }) {
     return (
         <View style={styles.container}>
-            <Text>Who Wants It Most?</Text>
+            <Text style={styles.text}>Who Wants It Most?</Text>
             <TouchableHighlight
+                activeOpacity={0.7}
                 style={styles.button}
                 onPress={() => navigation.navigate("CreateRoom")}
-                underlayColor="orange"
+                underlayColor="grey"
             >
-                <Text style={styles.buttonText}>CREATE ROOM</Text>
+                <View
+                    style={[
+                        styles.buttonTextWrapper,
+                        styles.createButtonTextWrapper,
+                    ]}
+                >
+                    <Text style={styles.buttonText}>CREATE ROOM</Text>
+                </View>
             </TouchableHighlight>
             <TouchableHighlight
+                activeOpacity={0.7}
                 style={styles.button}
                 onPress={() => navigation.navigate("JoinRoom")}
-                underlayColor="orange"
+                underlayColor="grey"
             >
-                <Text style={styles.buttonText}>JOIN ROOM</Text>
+                <View
+                    style={[
+                        styles.buttonTextWrapper,
+                        styles.joinButtonTextWrapper,
+                    ]}
+                >
+                    <Text style={styles.buttonText}>JOIN ROOM</Text>
+                </View>
             </TouchableHighlight>
         </View>
     );
@@ -29,13 +45,23 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
+    text: {
+        fontSize: 25,
+    },
     button: {
-        margin: 10,
-        padding: 10,
-        borderWidth: 2,
         borderRadius: 10,
+        margin: 10,
         alignSelf: "stretch",
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
+    },
+    buttonTextWrapper: {
+        padding: 10,
+        borderRadius: 10,
+    },
+    createButtonTextWrapper: {
+        backgroundColor: "rgba(242, 194, 90, 1)",
+    },
+    joinButtonTextWrapper: {
+        backgroundColor: "rgba(124, 223, 207, 1)",
     },
     buttonText: {
         fontSize: 30,

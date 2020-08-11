@@ -40,42 +40,54 @@ export default function RankingDecimalInput({ onConfirm, focused }) {
                         ]}
                         onChangeText={onChangeValue}
                         value={value}
-                        placeholder={focused ? "" : "Enter a decimal"}
+                        placeholder={focused ? "" : "Enter your own number"}
                         keyboardType="decimal-pad"
                     />
                 </View>
                 {focused && (
                     <View style={{ flexDirection: "row" }}>
                         <TouchableHighlight
-                            style={[
-                                styles.confirmButton,
-                                ...(confirmButtonDisabled
-                                    ? [styles.confirmButtonDisabled]
-                                    : []),
-                            ]}
+                            style={styles.button}
                             onPress={() => onConfirm(value)}
-                            underlayColor="orange"
+                            underlayColor="grey"
                             disabled={confirmButtonDisabled}
                         >
-                            <Text
+                            <View
                                 style={[
-                                    styles.confirmButtonText,
-                                    ...(confirmButtonDisabled
-                                        ? [styles.confirmButtonTextDisabled]
-                                        : []),
+                                    styles.buttonWrapper,
+                                    styles.confirmButtonWrapper,
+                                    confirmButtonDisabled
+                                        ? {}
+                                        : styles.confirmButtonWrapperDisabled,
                                 ]}
                             >
-                                Confirm
-                            </Text>
+                                <Text
+                                    style={[
+                                        styles.confirmButtonText,
+                                        !confirmButtonDisabled
+                                            ? {}
+                                            : styles.confirmButtonTextDisabled,
+                                    ]}
+                                >
+                                    Confirm
+                                </Text>
+                            </View>
                         </TouchableHighlight>
                         <TouchableHighlight
-                            style={styles.confirmButton}
+                            style={styles.button}
                             onPress={() => inputRef.current.blur()}
-                            underlayColor="orange"
+                            underlayColor="grey"
                         >
-                            <Text style={styles.confirmButtonText}>
-                                Go Back
-                            </Text>
+                            <View
+                                style={[
+                                    styles.buttonWrapper,
+                                    styles.backButtonWrapper,
+                                ]}
+                            >
+                                <Text style={styles.confirmButtonText}>
+                                    Go Back
+                                </Text>
+                            </View>
                         </TouchableHighlight>
                     </View>
                 )}
@@ -120,20 +132,29 @@ const styles = StyleSheet.create({
         fontSize: 20,
         backgroundColor: "lightgrey",
     },
-    confirmButton: {
+    button: {
         margin: 10,
-        padding: 10,
-        borderWidth: 2,
+        flex: 1,
         borderRadius: 10,
     },
-    confirmButtonDisabled: {
+    confirmButtonWrapperDisabled: {
         backgroundColor: "lightgrey",
     },
     confirmButtonText: {
+        margin: 10,
         fontSize: 30,
         textAlign: "center",
     },
     confirmButtonTextDisabled: {
         color: "grey",
+    },
+    buttonWrapper: {
+        borderRadius: 10,
+    },
+    confirmButtonWrapper: {
+        backgroundColor: "rgba(125, 196, 232, 1)",
+    },
+    backButtonWrapper: {
+        backgroundColor: "rgba(242, 194, 90, 1)",
     },
 });

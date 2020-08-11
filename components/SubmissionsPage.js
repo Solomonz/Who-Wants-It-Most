@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
     ActivityIndicator,
     SectionList,
@@ -78,7 +78,7 @@ export default function SubmissionsPage({ route, navigation }) {
                             <Text
                                 style={[
                                     styles.closeComponentText,
-                                    { fontWeight: "bold" },
+                                    styles.closeComponentValueText,
                                 ]}
                             >
                                 ({roomState.closed ? "CLOSED" : "OPEN"})
@@ -115,29 +115,31 @@ export default function SubmissionsPage({ route, navigation }) {
                 ) : (
                     <TouchableHighlight
                         disabled={revealButtonDisabled}
-                        style={
-                            revealButtonDisabled
-                                ? [
-                                      styles.revealButton,
-                                      styles.revealButtonDisabled,
-                                  ]
-                                : styles.revealButton
-                        }
+                        style={styles.revealButton}
                         onPress={onReveal}
-                        underlayColor="orange"
+                        underlayColor="grey"
                     >
-                        <Text
-                            style={
+                        <View
+                            style={[
+                                styles.revealButtonWrapper,
                                 revealButtonDisabled
-                                    ? [
-                                          styles.revealButtonText,
-                                          styles.revealButtonTextDisabled,
-                                      ]
-                                    : styles.revealButtonText
-                            }
+                                    ? styles.revealButtonWrapperDisabled
+                                    : {},
+                            ]}
                         >
-                            Who Wants It Most?
-                        </Text>
+                            <Text
+                                style={
+                                    revealButtonDisabled
+                                        ? [
+                                              styles.revealButtonText,
+                                              styles.revealButtonTextDisabled,
+                                          ]
+                                        : styles.revealButtonText
+                                }
+                            >
+                                Who Wants It Most?
+                            </Text>
+                        </View>
                     </TouchableHighlight>
                 ))}
         </View>
@@ -147,6 +149,8 @@ export default function SubmissionsPage({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 10,
+        paddingBottom: 30,
     },
     paramTextContainer: {
         padding: 10,
@@ -163,6 +167,9 @@ const styles = StyleSheet.create({
     closeComponentText: {
         fontSize: 14,
         textAlign: "center",
+    },
+    closeComponentValueText: {
+        fontWeight: "bold",
     },
     paramText: {
         fontSize: 30,
@@ -204,21 +211,22 @@ const styles = StyleSheet.create({
         color: "red",
     },
     revealButton: {
-        margin: 10,
-        padding: 10,
-        borderWidth: 2,
-        borderRadius: 5,
+        borderRadius: 10,
+    },
+    revealButtonWrapper: {
+        borderRadius: 10,
         flexDirection: "row",
         alignSelf: "center",
+        backgroundColor: "rgba(168, 168, 255, 1)",
     },
-    revealButtonDisabled: {
+    revealButtonWrapperDisabled: {
         backgroundColor: "lightgrey",
     },
     revealButtonText: {
         flex: 1,
+        margin: 10,
         fontSize: 30,
         textAlign: "center",
-        color: "blue",
     },
     revealButtonTextDisabled: {
         color: "grey",

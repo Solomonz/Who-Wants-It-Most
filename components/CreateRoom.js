@@ -73,13 +73,18 @@ export default function CreateRoom({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text>Your room code is:</Text>
+            <View style={styles.buffer} />
+            <Text style={[styles.infoText, styles.roomCodeExplainingText]}>
+                Your room code is:
+            </Text>
             {requestingRoomCode ? (
                 <ActivityIndicator size="large" />
             ) : (
-                <Text style={styles.roomCodeText}>{roomCode}</Text>
+                <View style={styles.roomCodeContainer}>
+                    <Text style={styles.roomCodeText}>{roomCode}</Text>
+                </View>
             )}
-            <Text>Your Name</Text>
+            <Text style={[styles.infoText, styles.nameText]}>Your Name</Text>
             <View style={styles.inputContainer}>
                 <TextInput
                     ref={input}
@@ -126,7 +131,23 @@ export default function CreateRoom({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         alignItems: "center",
+    },
+    buffer: {
+        flex: 0.2,
+    },
+    infoText: {
+        fontSize: 30,
+    },
+    roomCodeExplainingText: {
+        marginBottom: 10,
+    },
+    roomCodeContainer: {
+        backgroundColor: "rgba(240, 152, 204, 1)",
+        flexDirection: "row",
+        marginHorizontal: 10,
+        borderRadius: 10,
     },
     inputContainer: {
         flexDirection: "row",
@@ -134,6 +155,9 @@ const styles = StyleSheet.create({
     errorMessage: {
         fontSize: 20,
         color: "red",
+    },
+    nameText: {
+        marginTop: 30,
     },
     nameTextInput: {
         flex: 1,
@@ -164,5 +188,7 @@ const styles = StyleSheet.create({
     roomCodeText: {
         fontSize: 30,
         textAlign: "center",
+        flex: 1,
+        padding: 10,
     },
 });

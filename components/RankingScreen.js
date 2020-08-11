@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-    Keyboard,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
 import RankingButtonColumn from "./RankingButtonColumn";
 import RankingDecimalInput from "./RankingDecimalInput";
 import RankingConfirmationModal from "./RankingConfirmationModal";
@@ -138,6 +133,8 @@ export default function RankingScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 10,
+        paddingBottom: 20,
     },
     columnsContainer: {
         flexDirection: "row",

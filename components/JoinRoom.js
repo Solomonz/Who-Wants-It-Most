@@ -56,7 +56,10 @@ export default function JoinRoom({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text>Enter Room Code</Text>
+            <View style={styles.buffer} />
+            <Text style={[styles.infoText, styles.roomCodeExplainingText]}>
+                Enter Room Code
+            </Text>
             <View style={styles.inputContainer}>
                 <TextInput
                     ref={roomCodeInput}
@@ -71,7 +74,7 @@ export default function JoinRoom({ navigation }) {
                     style={styles.textInput}
                 />
             </View>
-            <Text>Your Name</Text>
+            <Text style={[styles.infoText, styles.nameText]}>Your Name</Text>
             <View style={styles.inputContainer}>
                 <TextInput
                     ref={nameInput}
@@ -118,7 +121,17 @@ export default function JoinRoom({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         alignItems: "center",
+    },
+    buffer: {
+        flex: 0.2,
+    },
+    infoText: {
+        fontSize: 30,
+    },
+    roomCodeExplainingText: {
+        marginBottom: 10,
     },
     inputContainer: {
         flexDirection: "row",
@@ -126,6 +139,9 @@ const styles = StyleSheet.create({
     errorMessage: {
         fontSize: 20,
         color: "red",
+    },
+    nameText: {
+        marginTop: 30,
     },
     textInput: {
         flex: 1,
