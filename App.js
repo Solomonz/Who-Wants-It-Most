@@ -4,6 +4,7 @@ import CreateRoom from "./components/CreateRoom";
 import JoinRoom from "./components/JoinRoom";
 import RankingScreen from "./components/RankingScreen";
 import SubmissionsScreen from "./components/SubmissionsScreen";
+import TieScreen from "./components/TieScreen";
 import ResultsScreen from "./components/ResultsScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -38,6 +39,11 @@ export default function App() {
                     name="SubmissionsScreen"
                     options={{ title: "Submissions" }}
                     component={SubmissionsScreen}
+                />
+                <Screen
+                    name="TieScreen"
+                    options={{ title: "It's a Tie!" }}
+                    component={TieScreen}
                 />
                 <Screen
                     name="ResultsScreen"

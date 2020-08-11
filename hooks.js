@@ -2,8 +2,12 @@ import { useState, useEffect } from "react";
 
 import constants from "./constants.json";
 
-export const useDecimalInputState = () => {
+export const useDecimalInputState = (tieParams = null) => {
     const [value, setValue] = useState("");
+    const [legal, setLegal] = useState(false);
+
+    const lowerBound = tieParams === null ? 1 : tieParams.lowerBound;
+    const upperBound = tieParams === null ? 10 : tieParams.upperBound;
 
     const onChangeValue = (newValue) => {
         if (newValue === "") {
@@ -17,16 +21,15 @@ export const useDecimalInputState = () => {
             cleanedNewValue =
                 betweenTheDots[0] + "." + betweenTheDots.slice(1).join("");
         }
-        if (cleanedNewValue > 10) {
-            cleanedNewValue = "10";
+        if (cleanedNewValue > upperBound || cleanedNewValue < lowerBound) {
+            setLegal(false);
+        } else {
+            setLegal(true);
         }
-        if (cleanedNewValue < 1) {
-            cleanedNewValue = "1";
-        }
-        setValue(cleanedNewValue);
+        setValue(cleanedNewValue + "");
     };
 
-    return [value, onChangeValue];
+    return [value, legal, onChangeValue];
 };
 
 const transformRoomState = (roomState) => {

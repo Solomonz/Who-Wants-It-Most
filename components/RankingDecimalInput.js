@@ -9,11 +9,14 @@ import {
 
 import { useDecimalInputState } from "../hooks";
 
-export default function RankingDecimalInput({ onConfirm, focused }) {
-    const [value, onChangeValue] = useDecimalInputState();
-    const [confirmButtonDisabled, setConfirmButtonDisabled] = useState(true);
+export default function RankingDecimalInput({
+    onConfirm,
+    focused,
+    tieParams = null,
+}) {
+    const isTie = tieParams !== null;
+    const [value, legal, onChangeValue] = useDecimalInputState(tieParams);
     const inputRef = useRef();
-    useEffect(() => setConfirmButtonDisabled(value === ""), [value]);
     return (
         <View style={styles.container}>
             <View
@@ -50,13 +53,13 @@ export default function RankingDecimalInput({ onConfirm, focused }) {
                             style={styles.button}
                             onPress={() => onConfirm(value)}
                             underlayColor="grey"
-                            disabled={confirmButtonDisabled}
+                            disabled={!legal}
                         >
                             <View
                                 style={[
                                     styles.buttonWrapper,
                                     styles.confirmButtonWrapper,
-                                    confirmButtonDisabled
+                                    legal
                                         ? {}
                                         : styles.confirmButtonWrapperDisabled,
                                 ]}
@@ -64,7 +67,7 @@ export default function RankingDecimalInput({ onConfirm, focused }) {
                                 <Text
                                     style={[
                                         styles.confirmButtonText,
-                                        !confirmButtonDisabled
+                                        legal
                                             ? {}
                                             : styles.confirmButtonTextDisabled,
                                     ]}
