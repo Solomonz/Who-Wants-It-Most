@@ -63,14 +63,13 @@ export default function JoinRoom({ navigation }) {
             <View style={styles.inputContainer}>
                 <TextInput
                     ref={roomCodeInput}
+                    autoCapitalize="characters"
+                    autoCompleteType="off"
                     autoCorrect={false}
-                    autoCapitalize={"none"}
                     maxLength={4}
                     textAlign="center"
                     value={roomCode}
-                    onChangeText={(newRoomCode) => {
-                        setRoomCode(newRoomCode.toUpperCase());
-                    }}
+                    onChangeText={setRoomCode}
                     style={styles.textInput}
                 />
             </View>
@@ -78,10 +77,13 @@ export default function JoinRoom({ navigation }) {
             <View style={styles.inputContainer}>
                 <TextInput
                     ref={nameInput}
+                    autoCapitalize="characters"
+                    autoCompleteType="off"
+                    autoCorrect={false}
+                    maxLength={15}
+                    textAlign="center"
                     value={name}
-                    onChangeText={(newName) => {
-                        setName(newName.toUpperCase());
-                    }}
+                    onChangeText={setName}
                     style={styles.textInput}
                 />
             </View>

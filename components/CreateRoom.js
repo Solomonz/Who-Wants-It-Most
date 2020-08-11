@@ -88,10 +88,13 @@ export default function CreateRoom({ navigation }) {
             <View style={styles.inputContainer}>
                 <TextInput
                     ref={input}
+                    autoCapitalize="characters"
+                    autoCompleteType="off"
+                    autoCorrect={false}
+                    maxLength={15}
+                    textAlign="center"
                     value={name}
-                    onChangeText={(newName) => {
-                        setName(newName.toUpperCase());
-                    }}
+                    onChangeText={setName}
                     style={styles.nameTextInput}
                 />
             </View>
